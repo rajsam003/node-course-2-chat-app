@@ -14,13 +14,33 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');
 
+
+socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat App',
+    createdAt: new Date().getTime()
+});
+
+socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New User Joined',
+    createdAt: new Date().getTime()
+})
+
 socket.on('createMessage', (newMessage) => {
     console.log('Biju unaku message', newMessage);
     io.emit('newMessage', {
         from: newMessage.from,
         text: newMessage.text,
         createdAt: new Date().getTime()
-    })
+    });
+
+//broadcast will not allow to send the message to the sender himself
+    // socket.broadcast.emit('newMessage', {
+    //         from: newMessage.from,
+    //         text: newMessage.text,
+    //         createdAt: new Date().getTime()
+    //     });
 });
 
     socket.on('disconnect', ()=> {
